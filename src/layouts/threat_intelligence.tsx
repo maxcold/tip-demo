@@ -9,9 +9,10 @@ import {
   EuiPageTemplate,
   EuiPageHeader,
   EuiPageHeaderSection,
-  EuiText,
+  EuiText, EuiButton
 } from '@elastic/eui';
 import CollapsibleNav from './threat_intelligence_collapsible_nav';
+import { IndicatorsImport } from '../components/indicators_import/indicators_import';
 
 const ThreatIntelligenceLayout: React.FC = ({ children }) => {
   const styles = threatIntelligenceLayoutStyles();
@@ -31,6 +32,9 @@ const ThreatIntelligenceLayout: React.FC = ({ children }) => {
                 <EuiText>
                   <h2>Indicators</h2>
                 </EuiText>
+              </EuiPageHeaderSection>
+              <EuiPageHeaderSection>
+                <IndicatorsImport />
               </EuiPageHeaderSection>
             </EuiPageHeader>
 
