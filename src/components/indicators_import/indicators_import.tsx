@@ -26,13 +26,13 @@ const options = [
     label: 'file',
   },
   {
-    label: 'ip',
+    label: 'ipv4-addr',
+  },
+  {
+    label: 'ipv6-addr',
   },
   {
     label: 'url',
-  },
-  {
-    label: 'domain',
   },
   {
     label: 'domain-name',
@@ -42,12 +42,6 @@ const options = [
   },
   {
     label: 'email-message',
-  },
-  {
-    label: 'ipv4-addr',
-  },
-  {
-    label: 'ipv6-addr',
   },
   {
     label: 'x509-certificate',
@@ -61,6 +55,27 @@ const options = [
   {
     label: 'mac-addr',
   },
+  {
+    label: 'artifact',
+  },
+  {
+    label: 'directory',
+  },
+  {
+    label: 'mutex',
+  },
+  {
+    label: 'network-traffic',
+  },
+  {
+    label: 'process',
+  },
+  {
+    label: 'software',
+  },
+  {
+    label: 'user-account',
+  }
 ];
 
 export const IndicatorsImport = () => {
@@ -77,7 +92,7 @@ export const IndicatorsImport = () => {
     <EuiForm id={modalFormId} component={'form'}>
       <EuiFormRow>
         <EuiComboBox
-          prepend="Type"
+          prepend="STIX Type"
           singleSelection={{ asPlainText: true }}
           placeholder="Select a type"
           options={options}
