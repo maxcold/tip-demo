@@ -6,6 +6,8 @@ import {
 } from '@elastic/eui';
 import { useCallback, useState } from 'react';
 
+import { indicators as rawIndicators } from '../../lib/ti_data';
+
 const gridStyle = {
   border: 'horizontal',
   header: 'underline',
@@ -32,7 +34,42 @@ export const generateMockIndicator = () => {
   return indicator;
 };
 
-const indicators = Array(100).fill(generateMockIndicator());
+const flattenObj = (ob) => {
+
+  // The object which contains the
+  // final result
+  const result = {};
+
+  // loop through the object "ob"
+  for (const i in ob) {
+    // We check the type of the i using
+    // typeof() function and recursively
+    // call the function again
+    if (typeof ob[i] === 'object' && !Array.isArray(ob[i])) {
+      const temp = flattenObj(ob[i]);
+      for (const j in temp) {
+        // Store temp in result
+        result[`${i}.${j}`] = temp[j];
+      }
+    }
+
+    // Else store ob[i] in result directly
+    else {
+      result[i] = ob[i];
+    }
+  }
+  return result;
+};
+
+//const indicators = Array(100).fill(generateMockIndicator());
+const indicators = rawIndicators.map(rawIndicator => {
+  return {
+    _id: Math.random(),
+    fields: { ...flattenObj(rawIndicator) },
+  };
+});
+
+console.log(indicators)
 
 const columns = [
   {
