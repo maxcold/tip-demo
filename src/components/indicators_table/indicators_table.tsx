@@ -34,8 +34,7 @@ export const generateMockIndicator = () => {
   return indicator;
 };
 
-const flattenObj = (ob) => {
-
+const flattenObj = ob => {
   // The object which contains the
   // final result
   const result = {};
@@ -68,8 +67,6 @@ const indicators = rawIndicators.map(rawIndicator => {
     fields: { ...flattenObj(rawIndicator) },
   };
 });
-
-console.log(indicators)
 
 const columns = [
   {
