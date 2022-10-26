@@ -34,9 +34,7 @@ const ThreatIntelligenceLayout: React.FC = ({ children }) => {
               </EuiPageHeaderSection>
             </EuiPageHeader>
 
-            <div style={{ position: 'relative' }}>
-              {children}
-            </div>
+            <div style={{ position: 'relative' }}>{children}</div>
           </EuiPageTemplate.Section>
         </EuiPageTemplate>
       </div>

@@ -1,4 +1,9 @@
-import { EuiButtonEmpty, EuiButtonIcon, EuiDataGrid, EuiText } from '@elastic/eui';
+import {
+  EuiButtonEmpty,
+  EuiButtonIcon,
+  EuiDataGrid,
+  EuiText,
+} from '@elastic/eui';
 import { useCallback, useState } from 'react';
 
 const gridStyle = {
@@ -145,9 +150,10 @@ export const IndicatorsTable = () => {
                 color="text"
                 data-test-subj="show-field-browser"
                 iconType="tableOfContents"
-                onClick={() => {}}
-                size="xs"
-              >
+                onClick={() => {
+                  alert('show field browser');
+                }}
+                size="xs">
                 Fields
               </EuiButtonEmpty>
             ),
@@ -156,7 +162,9 @@ export const IndicatorsTable = () => {
             <EuiButtonIcon
               iconType="inspect"
               title={'Inspect'}
-              onClick={() => {}}
+              onClick={() => {
+                alert('Inspect');
+              }}
             />
           ),
         },
