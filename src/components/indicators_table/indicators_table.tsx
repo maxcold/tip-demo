@@ -4,9 +4,8 @@ import {
   EuiDataGrid,
   EuiText,
 } from '@elastic/eui';
-import { useCallback, useEffect, useState } from 'react';
-
-import { indicators as rawIndicators } from '../../lib/ti_data';
+import { useCallback, useContext, useState } from 'react';
+import { IndicatorsContext } from '../../context/indicators';
 
 const gridStyle = {
   border: 'horizontal',
@@ -14,58 +13,6 @@ const gridStyle = {
   cellPadding: 'm',
   fontSize: 's',
 } as const;
-
-const generateMockBaseIndicator = () => ({
-  fields: {
-    '@timestamp': ['2022-01-01T01:01:01.000Z'],
-    'threat.indicator.first_seen': ['2022-01-01T01:01:01.000Z'],
-    'threat.feed.name': ['[Filebeat] AbuseCH Malware'],
-  },
-  _id: Math.random(),
-});
-
-export const generateMockIndicator = () => {
-  const indicator = generateMockBaseIndicator();
-
-  indicator.fields['threat.indicator.type'] = ['type'];
-  indicator.fields['threat.indicator.ip'] = ['0.0.0.0'];
-  indicator.fields['threat.indicator.name'] = ['0.0.0.0'];
-
-  return indicator;
-};
-
-const flattenObj = ob => {
-  // The object which contains the
-  // final result
-  const result = {};
-
-  // loop through the object "ob"
-  for (const i in ob) {
-    // We check the type of the i using
-    // typeof() function and recursively
-    // call the function again
-    if (typeof ob[i] === 'object' && !Array.isArray(ob[i])) {
-      const temp = flattenObj(ob[i]);
-      for (const j in temp) {
-        // Store temp in result
-        result[`${i}.${j}`] = temp[j];
-      }
-    }
-
-    // Else store ob[i] in result directly
-    else {
-      result[i] = ob[i];
-    }
-  }
-  return result;
-};
-
-const mappedIndicators = rawIndicators.map(rawIndicator => {
-  return {
-    _id: Math.random(),
-    fields: { ...flattenObj(rawIndicator) },
-  };
-});
 
 const columns = [
   {
@@ -96,8 +43,9 @@ const columns = [
 
 export const IndicatorsTable = () => {
   // Pagination
+  const { indicators, setIndicators } = useContext(IndicatorsContext);
+  let indicatorsToRender = indicators.slice();
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
-  const [indicators, setIndicators] = useState(mappedIndicators.slice());
   const onChangeItemsPerPage = useCallback(
     pageSize =>
       setPagination(pagination => ({
@@ -143,33 +91,36 @@ export const IndicatorsTable = () => {
   const [sortingColumns, setSortingColumns] = useState([]);
   const onSort = useCallback(
     sortingColumns => {
-      if (sortingColumns.length === 0) {
+      if (sortingColumns.length <= 1) {
         setSortingColumns(sortingColumns);
-        setIndicators(mappedIndicators);
-      } else if (sortingColumns.length === 1) {
-        setSortingColumns(sortingColumns);
-        indicators.sort(
-          compare(sortingColumns[0].id, sortingColumns[0].direction)
-        );
-        setIndicators(indicators);
       } else {
-        alert('multi column sort is not supported')
+        alert('multi column sort is not supported');
       }
     },
     [setSortingColumns]
   );
+
+  if (sortingColumns.length === 0) {
+    indicatorsToRender = indicators.slice();
+  }
+
+  if (sortingColumns.length === 1) {
+    indicatorsToRender.sort(
+      compare(sortingColumns[0].id, sortingColumns[0].direction)
+    );
+  }
 
   const [visibleColumns, setVisibleColumns] = useState(
     columns.map(({ id }) => id) // initialize to the full set of columns
   );
 
   const renderCellValue = ({ rowIndex, columnId }) => {
-    return indicators[rowIndex].fields[columnId]
-      ? indicators[rowIndex].fields[columnId]
+    return indicatorsToRender[rowIndex].fields[columnId]
+      ? indicatorsToRender[rowIndex].fields[columnId]
       : '-';
   };
 
-  const indicatorCount = indicators.length;
+  const indicatorCount = indicatorsToRender.length;
   const start = pagination.pageIndex * pagination.pageSize;
   const end = start + pagination.pageSize;
 
