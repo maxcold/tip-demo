@@ -109,7 +109,7 @@ export const IndicatorsImport = () => {
     <EuiModal onClose={closeModal} initialFocus="[name=popswitch]">
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          <h1>Import...</h1>
+          <h1>Import indicators</h1>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 

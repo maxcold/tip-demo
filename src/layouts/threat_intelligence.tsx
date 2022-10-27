@@ -9,7 +9,7 @@ import {
   EuiPageTemplate,
   EuiPageHeader,
   EuiPageHeaderSection,
-  EuiText, EuiButton
+  EuiText,
 } from '@elastic/eui';
 import CollapsibleNav from './threat_intelligence_collapsible_nav';
 import { IndicatorsImport } from '../components/indicators_import/indicators_import';

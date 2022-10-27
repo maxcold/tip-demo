@@ -4,7 +4,7 @@ import {
   EuiDataGrid,
   EuiText,
 } from '@elastic/eui';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { indicators as rawIndicators } from '../../lib/ti_data';
 
@@ -60,8 +60,7 @@ const flattenObj = ob => {
   return result;
 };
 
-//const indicators = Array(100).fill(generateMockIndicator());
-const indicators = rawIndicators.map(rawIndicator => {
+const mappedIndicators = rawIndicators.map(rawIndicator => {
   return {
     _id: Math.random(),
     fields: { ...flattenObj(rawIndicator) },
@@ -98,6 +97,7 @@ const columns = [
 export const IndicatorsTable = () => {
   // Pagination
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [indicators, setIndicators] = useState(mappedIndicators.slice());
   const onChangeItemsPerPage = useCallback(
     pageSize =>
       setPagination(pagination => ({
@@ -113,10 +113,48 @@ export const IndicatorsTable = () => {
   );
 
   // Sorting
+  const compare = (field, direction) => {
+    return (a, b) => {
+      if (b.fields[field] === undefined) {
+        return -1;
+      }
+
+      if (a.fields[field] === b.fields[field]) {
+        return 0;
+      }
+
+      if (direction === 'asc' && a.fields[field] < b.fields[field]) {
+        return -1;
+      }
+
+      if (direction === 'desc' && a.fields[field] > b.fields[field]) {
+        return -1;
+      }
+
+      if (direction === 'asc' && a.fields[field] > b.fields[field]) {
+        return 1;
+      }
+
+      if (direction === 'desc' && a.fields[field] < b.fields[field]) {
+        return 1;
+      }
+    };
+  };
   const [sortingColumns, setSortingColumns] = useState([]);
   const onSort = useCallback(
     sortingColumns => {
-      setSortingColumns(sortingColumns);
+      if (sortingColumns.length === 0) {
+        setSortingColumns(sortingColumns);
+        setIndicators(mappedIndicators);
+      } else if (sortingColumns.length === 1) {
+        setSortingColumns(sortingColumns);
+        indicators.sort(
+          compare(sortingColumns[0].id, sortingColumns[0].direction)
+        );
+        setIndicators(indicators);
+      } else {
+        alert('multi column sort is not supported')
+      }
     },
     [setSortingColumns]
   );
@@ -125,11 +163,11 @@ export const IndicatorsTable = () => {
     columns.map(({ id }) => id) // initialize to the full set of columns
   );
 
-  const renderCellValue = useCallback(({ rowIndex, columnId }) => {
+  const renderCellValue = ({ rowIndex, columnId }) => {
     return indicators[rowIndex].fields[columnId]
       ? indicators[rowIndex].fields[columnId]
       : '-';
-  }, []);
+  };
 
   const indicatorCount = indicators.length;
   const start = pagination.pageIndex * pagination.pageSize;
