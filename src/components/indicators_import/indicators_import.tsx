@@ -223,7 +223,7 @@ export const IndicatorsImport = () => {
       </EuiModalFooter>
     </EuiModal>
   ) : undefined;
-  
+
   return (
     <>
       <EuiButton color="primary" iconType="indexOpen" onClick={openModal}>
