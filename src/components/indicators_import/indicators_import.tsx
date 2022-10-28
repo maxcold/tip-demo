@@ -22,77 +22,76 @@ import {
 import { useContext, useState } from 'react';
 import { IndicatorsContext } from '../../context/indicators';
 
-const options = [
-  {
-    label: 'file',
-  },
-  {
-    label: 'ipv4-addr',
-  },
-  {
-    label: 'ipv6-addr',
-  },
-  {
-    label: 'url',
-  },
-  {
-    label: 'domain-name',
-  },
-  {
-    label: 'email-addr',
-  },
-  {
-    label: 'email-message',
-  },
-  {
-    label: 'x509-certificate',
-  },
-  {
-    label: 'windows-registry-key',
-  },
-  {
-    label: 'autonomous-system',
-  },
-  {
-    label: 'mac-addr',
-  },
-  {
-    label: 'artifact',
-  },
-  {
-    label: 'directory',
-  },
-  {
-    label: 'mutex',
-  },
-  {
-    label: 'network-traffic',
-  },
-  {
-    label: 'process',
-  },
-  {
-    label: 'software',
-  },
-  {
-    label: 'user-account',
-  },
+const stixIoCTypes = [
+  'file',
+  'ipv4-addr',
+  'ipv6-addr',
+  'url',
+  'domain-name',
+  'email-addr',
+  'email-message',
+  'x509-certificate',
+  'windows-registry-key',
+  'autonomous-system',
+  'mac-addr',
+  'artifact',
+  'directory',
+  'mutex',
+  'network-traffic',
+  'process',
+  'software',
+  'user-account',
 ];
+const stixIoCTypeOptions = stixIoCTypes.map(type => ({ label: type }));
+
+const hashTypes = [
+  'md5',
+  'sha256',
+  'sha1',
+  'sha224',
+  'sha3-224',
+  'sha3-256',
+  'sha384',
+  'sha3-384',
+  'sha512',
+  'sha3-512',
+  'sha512/224',
+  'sha512/256',
+  'ssdeep',
+  'tlsh',
+  'impfuzzy',
+  'imphash',
+  'pehash',
+  'vhash',
+];
+const hashTypeOptions = hashTypes.map(hashType => {
+  return {
+    label: hashType,
+  };
+});
 
 export const IndicatorsImport = () => {
   const { indicators, setIndicators } = useContext(IndicatorsContext);
   const modalFormId = useGeneratedHtmlId({ prefix: 'modalForm' });
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedType, setSelectedType] = useState([options[0]]);
+  const [selectedType, setSelectedType] = useState([stixIoCTypeOptions[0]]);
+  const [selectedHashType, setSelectedHashType] = useState([
+    hashTypeOptions[0],
+  ]);
   const [indicatorsToImport, setIndicatorsToImport] = useState('');
   const closeModal = () => setIsModalVisible(false);
   const openModal = () => setIsModalVisible(true);
   const onTypeChange = (selectedOptions: any) => {
     setSelectedType(selectedOptions);
   };
+  const onHashTypeChange = (selectedOptions: any) => {
+    setSelectedHashType(selectedOptions);
+  };
   const onIndicatorsToImportChange = (e: any) => {
     setIndicatorsToImport(e.target.value);
   };
+  const isFileIoCType = selectedType[0].label === 'file';
+  const selectedHashTypeLabel = selectedHashType[0].label;
   const onImport = () => {
     const type = selectedType[0].label;
     const indicatorsToImportArr = indicatorsToImport.split('\n');
@@ -100,7 +99,7 @@ export const IndicatorsImport = () => {
 
     switch (type) {
       case 'file':
-        key = 'threat.indicator.file.hash.sha256';
+        key = `threat.indicator.file.hash.${selectedHashTypeLabel}`;
         break;
       case 'ipv4-addr':
         key = 'threat.indicator.ip';
@@ -180,11 +179,23 @@ export const IndicatorsImport = () => {
           prepend="STIX Type"
           singleSelection={{ asPlainText: true }}
           placeholder="Select a type"
-          options={options}
+          options={stixIoCTypeOptions}
           selectedOptions={selectedType}
           onChange={onTypeChange}
         />
       </EuiFormRow>
+      {isFileIoCType && (
+        <EuiFormRow>
+          <EuiComboBox
+            prepend="Hash Type"
+            singleSelection={{ asPlainText: true }}
+            placeholder="Select a hash type"
+            options={hashTypeOptions}
+            selectedOptions={selectedHashType}
+            onChange={onHashTypeChange}
+          />
+        </EuiFormRow>
+      )}
       <EuiFormRow label="Indicators" helpText="One indicator per line">
         <EuiTextArea
           value={indicatorsToImport}
@@ -212,7 +223,7 @@ export const IndicatorsImport = () => {
       </EuiModalFooter>
     </EuiModal>
   ) : undefined;
-
+  
   return (
     <>
       <EuiButton color="primary" iconType="indexOpen" onClick={openModal}>
