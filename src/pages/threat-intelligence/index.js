@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
 import ThreatIntelligenceLayout from '../../layouts/threat_intelligence';
 import { IndicatorsTable } from '../../components/indicators_table/indicators_table';
-
 import { IndicatorsContext } from '../../context/indicators';
 import { indicators as rawIndicators } from '../../lib/ti_data';
 
@@ -46,6 +46,7 @@ const Index = () => {
     <IndicatorsContext.Provider value={{ indicators, setIndicators }}>
       <ThreatIntelligenceLayout>
         <IndicatorsTable />
+        <Analytics />
       </ThreatIntelligenceLayout>
     </IndicatorsContext.Provider>
   );
